@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pharmacy Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Google Fonts for modern look -->
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #111;
+            --primary-dark: #222;
+            --accent: #239b56;
+            --danger: #e74c3c;
+            --bg: #f8fafd;
+            --card-bg: #fff;
+            --border: #e0e0e0;
+            --shadow: 0 2px 12px rgba(40,116,166,0.08);
+            --radius: 10px;
+            --input-bg: #f3f6fa;
+        }
+        html, body {
+            background: var(--bg);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #222;
+        }
+        header {
+            background: linear-gradient(skyblue);
+            color:black;
+            padding: 28px 0 18px 32px;
+            font-size: 2.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 8px rgba(40,116,166,0.08);
+        }
+        .tabbar {
+            display: flex;
+            background: #111;
+            border-bottom: 1.5px solid var(--border);
+            box-shadow: 0 1px 4px #e2e2e2;
+        }
+        .tabbar button {
+            flex: 1 1 120px;
+            border: none;
+            outline: none;
+            padding: 16px 0 13px 0;
+            font-size: 1.08rem;
+            color: #fff;
+            background: transparent;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s, font-weight 0.15s;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            border-bottom: 3px solid transparent;
+        }
+        .tabbar button.active {
+            background: var(--card-bg);
+            color: var(--primary);
+            font-weight: 700;
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(40,116,166,0.06);
+        }
+        .container {
+            max-width: 1050px;
+            margin: 32px auto 32px auto;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 32px 24px 32px 24px;
+        }
+        h2 {
+            color: var(--primary);
+            margin-top: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .section-header {
+            margin: 18px 0 12px 0;
+            font-size: 1.08rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+        form, table {
+            margin-bottom: 18px;
+        }
+        input, button, select {
+            margin: 4px 6px 4px 0;
+            padding: 10px 12px;
+            border-radius: 5px;
+            border: 1.2px solid #cfd8dc;
+            font-size: 1rem;
+            background: var(--input-bg);
+            transition: border 0.15s, box-shadow 0.15s;
+        }
+        input:focus, select:focus {
+            border: 1.5px solid var(--primary);
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 2px #2874a61a;
+        }
+        button[type="submit"], .tabbar button {
+            background: var(--primary);
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            transition: background 0.15s, box-shadow 0.15s;
+            box-shadow: 0 2px 8px rgba(40,116,166,0.07);
+        }
+        button[type="submit"]:hover, .tabbar button.active:hover {
+            background: var(--primary-dark);
+        }
+        .edit-btn, .del-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.08rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.13s;
+        }
+        .edit-btn { color: var(--accent); }
+        .edit-btn:hover { background: #eafaf1; }
+        .del-btn { color: var(--danger); }
+        .del-btn:hover { background: #fdecea; }
+        .tabcontent { display: none; }
+        .tabcontent.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            background: #fafbfc;
+            border-radius: 7px;
+            overflow: hidden;
+            margin-top: 10px;
+            box-shadow: 0 1px 4px #e2e2e2;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 12px 8px;
+            text-align: center;
+            background: #fff;
+            font-size: 1.01rem;
+        }
+        th {
+            background: #f3f3f3;
+            color: var(--primary-dark);
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+        tr:nth-child(even) td { background: #f8fafd; }
+        .summary-bar {
+            margin: 10px 0 10px 0;
+            color: var(--primary-dark);
+            font-size: 1.03rem;
+            font-weight: 500;
+            background: #eaf6fb;
+            border-radius: 5px;
+            padding: 7px 14px;
+            display: inline-block;
+        }
+        .search-bar, .date-bar {
+            margin: 10px 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .search-bar input, .date-bar input, .search-bar select {
+            min-width: 160px;
+        }
+        .link {
+            color: var(--primary);
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .link:hover { color: var(--primary-dark);}
+        /* Sale popup styling */
+        #salePopup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            background: #fff;
+            padding: 32px 28px;
+            border: 3px solid var(--primary);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(40,116,166,0.18);
+            z-index: 10001;
+            min-width: 320px;
+            font-size: 1.08rem;
+        }
+        #salePopup p { margin-bottom: 18px; }
+        #salePopup button {
+            margin-top: 10px;
+            margin-right: 8px;
+            padding: 8px 18px;
+        }
+        /* Invoice items styling */
+        #invoiceItems > div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        #invoiceItems select, #invoiceItems input {
+            min-width: 120px;
+        }
+        #invoiceItems button {
+            background: #eee;
+            color: #333;
+            font-weight: 500;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 4px;
+            transition: background 0.13s;
+        }
+        #invoiceItems button:hover { background: #e0e0e0; }
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container { padding: 12px; }
+            th, td { font-size: 0.97rem; }
+            header { font-size: 1.4rem; padding-left: 12px; }
+        }
+        @media (max-width: 600px) {
+            .tabbar button { font-size: 0.97rem; padding: 10px 0 7px 0;}
+            .container { padding: 4px; }
+            th, td { font-size: 0.93rem; padding: 8px 4px;}
+            .search-bar, .date-bar { flex-direction: column; align-items: stretch; gap: 6px;}
+        }
+        /* Subtle hover for table rows */
+        tbody tr:hover td {
+            background: #eaf6fb !important;
+            transition: background 0.13s;
+        }
+    </style>
+</head>
+<body>
+<header>
+    Pharmacy Management System
+    <button id="logoutBtn" style="float: right; margin-right: 20px; padding: 8px 16px; background: #e74c3c; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
+        Logout
+    </button>
+</header>
+<script>
+    // Logout button functionality
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+        // Redirect to the login page
+        window.location.href = 'login.html';
+    });
+</script>
+<div class="tabbar" id="tabbar">
+    <button class="active" onclick="showTab('medicines')">Medicines</button>
+    <button onclick="showTab('suppliers')">Suppliers</button>
+    <button onclick="showTab('customers')">Customers</button>
+    <button onclick="showTab('purchases')">Purchases</button>
+    <button onclick="showTab('invoices')">Invoices</button>
+</div>
+<div class="container">
+
+    <!-- Medicines Section -->
+    <div class="tabcontent active" id="tab-medicines">
+        <div class="section-header">Manage Medicines</div>
+        <form id="medicineForm" autocomplete="off">
+            <input type="hidden" id="medId">
+            <input type="text" id="name" placeholder="Medicine Name" required>
+            <input type="number" id="quantity" placeholder="Quantity" min="1" required>
+            <input type="number" id="price" placeholder="Price" step="0.01" min="0" required>
+            <select id="supplierId"></select>
+            <button type="submit" id="addBtn">Add Medicine</button>
+            <button type="button" id="cancelBtn" style="display:none;background:#eee;color:#333;">Cancel</button>
+        </form>
+        <div class="search-bar">
+            <input type="text" id="medSearch" placeholder="Search medicine...">
+            <select id="medSort">
+                <option value="">Sort by...</option>
+                <option value="name">Name</option>
+                <option value="quantity">Quantity</option>
+                <option value="price">Price</option>
+            </select>
+            <button onclick="loadMedicines()">Search/Sort</button>
+        </div>
+        <div class="summary-bar" id="medSummary"></div>
+        <table id="medicinesTable">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Quantity</th><th>Price</th><th>Supplier</th><th>Actions</th><th>Sell</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Suppliers Section -->
+    <div class="tabcontent" id="tab-suppliers">
+        <div class="section-header">Manage Suppliers</div>
+        <form id="supplierForm" autocomplete="off">
+            <input type="hidden" id="supId">
+            <input type="text" id="supName" placeholder="Name" required>
+            <input type="text" id="supPhone" placeholder="Phone">
+            <input type="email" id="supEmail" placeholder="Email">
+            <input type="text" id="supAddress" placeholder="Address">
+            <button type="submit" id="addSupBtn">Add Supplier</button>
+            <button type="button" id="cancelSupBtn" style="display:none;background:#eee;color:#333;">Cancel</button>
+        </form>
+        <div class="search-bar">
+            <input type="text" id="supSearch" placeholder="Search supplier...">
+            <button onclick="loadSuppliers()">Search</button>
+        </div>
+        <table id="suppliersTable">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>#Medicines</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Customers Section -->
+    <div class="tabcontent" id="tab-customers">
+        <div class="section-header">Manage Customers</div>
+        <form id="customerForm">
+            <input type="hidden" id="custId">
+            <input type="text" id="custName" placeholder="Name" required>
+            <input type="text" id="custPhone" placeholder="Phone">
+            <input type="email" id="custEmail" placeholder="Email">
+            <input type="text" id="custAddress" placeholder="Address">
+            <button type="submit" id="addCustBtn">Add Customer</button>
+            <button type="button" id="cancelCustBtn" style="display:none;background:#eee;color:#333;">Cancel</button>
+        </form>
+        <div class="search-bar">
+            <input type="text" id="custSearch" placeholder="Search customer...">
+            <button onclick="loadCustomers()">Search</button>
+        </div>
+        <table id="customersTable">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>Total Sales</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Purchases Section -->
+    <div class="tabcontent" id="tab-purchases">
+        <div class="section-header">Record Purchases from Suppliers</div>
+        <form id="purchaseForm">
+            <select id="purchaseMedicine" required></select>
+            <select id="purchaseSupplier" required></select>
+            <input type="number" id="purchaseQty" placeholder="Quantity" min="1" required>
+            <input type="number" id="purchasePrice" placeholder="Purchase Price" step="0.01" min="0" required>
+            <button type="submit">Record Purchase</button>
+        </form>
+        <div class="date-bar">
+            From <input type="date" id="purchaseFrom"> To <input type="date" id="purchaseTo">
+            <button onclick="loadPurchases()">Filter</button>
+        </div>
+        <div class="summary-bar" id="purchaseSummary"></div>
+        <table id="purchasesTable">
+            <thead>
+                <tr><th>ID</th><th>Medicine</th><th>Supplier</th><th>Quantity</th><th>Price</th><th>Date</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Invoices (Sales) Section -->
+    <div class="tabcontent" id="tab-invoices">
+        <div class="section-header">Create Invoice (Sale)</div>
+        <form id="invoiceForm">
+            <select id="invoiceCustomer" required></select>
+            <div id="invoiceItems"></div>
+            <button type="button" onclick="addInvoiceItem()">Add Medicine</button>
+            <button type="submit">Create Invoice</button>
+        </form>
+        <div class="date-bar">
+            From <input type="date" id="invoiceFrom"> To <input type="date" id="invoiceTo">
+            <button onclick="loadInvoices()">Filter</button>
+        </div>
+        <div class="summary-bar" id="invoiceSummary"></div>
+        <div class="section-header" style="margin-top:15px;">Invoices</div>
+        <table id="invoicesTable">
+            <thead>
+                <tr><th>ID</th><th>Customer</th><th>Total</th><th>Date</th><th>Items</th><th>Print</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+<script>
+const API = 'http://localhost:3000/api';
+
+// Utility for date format
+function toISODate(date) {
+    if (!date) return '';
+    return new Date(date).toISOString().slice(0,10);
+}
+
+// ---------- TABS -----------
+function showTab(tab) {
+    document.querySelectorAll('.tabbar button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tabcontent').forEach(tabdiv => tabdiv.classList.remove('active'));
+    document.querySelector('.tabbar button[onclick="showTab(\'' + tab + '\')"]').classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+    if(tab === 'medicines') loadMedicines();
+    if(tab === 'suppliers') loadSuppliers();
+    if(tab === 'customers') loadCustomers();
+    if(tab === 'purchases') loadPurchases();
+    if(tab === 'invoices') loadInvoices();
+}
+
+// --------- Medicines ---------
+function loadMedicines() {
+    let q = document.getElementById('medSearch')?.value || "";
+    let sort = document.getElementById('medSort')?.value || "";
+    fetch(API + '/medicines' + (q ? '?q=' + encodeURIComponent(q) : ''))
+        .then(res => res.json())
+        .then(medicines => {
+            // Sort client-side for now
+            if (sort === "name") medicines.sort((a,b) => a.name.localeCompare(b.name));
+            else if (sort === "quantity") medicines.sort((a,b) => b.quantity - a.quantity);
+            else if (sort === "price") medicines.sort((a,b) => b.price - a.price);
+            const tbody = document.querySelector('#medicinesTable tbody');
+            tbody.innerHTML = '';
+            let totalStockValue = 0;
+            medicines.forEach(med => {
+                totalStockValue += med.quantity * med.price;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${med.id}</td>
+                    <td>${med.name}</td>
+                    <td>${med.quantity}</td>
+                    <td>${med.price}</td>
+                    <td>${med.supplier_name || ''}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editMedicine(${med.id}, '${med.name}', ${med.quantity}, ${med.price}, ${med.supplier_id})">&#9998;</button>
+                        <button class="del-btn" onclick="deleteMedicine(${med.id})">&#128465;</button>
+                    </td>
+                    <td>
+                        <form onsubmit="sellMedicine(event, ${med.id}, '${med.name}', ${med.price})">
+                            <input type="number" min="1" max="${med.quantity}" required style="width:60px" name="qty">
+                            <button type="submit">Sell</button>
+                        </form>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('medSummary').textContent = "Total medicines: " + medicines.length + 
+                " | Stock value: ₹" + totalStockValue.toFixed(2);
+            populateMedicineSelects(medicines);
+        });
+}
+document.getElementById('medicineForm').onsubmit = function(e) {
+    e.preventDefault();
+    const id = document.getElementById('medId').value;
+    const med = {
+        name: document.getElementById('name').value,
+        quantity: document.getElementById('quantity').value,
+        price: document.getElementById('price').value,
+        supplier_id: document.getElementById('supplierId').value || null
+    };
+    if (id) {
+        fetch(API + '/medicines/' + id, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(med)
+        }).then(() => {
+            resetForm();
+            loadMedicines();
+        });
+    } else {
+        fetch(API + '/medicines', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(med)
+        }).then(() => {
+            resetForm();
+            loadMedicines();
+        });
+    }
+};
+document.getElementById('cancelBtn').onclick = resetForm;
+function editMedicine(id, name, quantity, price, supplier_id) {
+    document.getElementById('medId').value = id;
+    document.getElementById('name').value = name;
+    document.getElementById('quantity').value = quantity;
+    document.getElementById('price').value = price;
+    document.getElementById('supplierId').value = supplier_id || '';
+    document.getElementById('addBtn').textContent = 'Update Medicine';
+    document.getElementById('cancelBtn').style.display = '';
+}
+function resetForm() {
+    document.getElementById('medId').value = '';
+    document.getElementById('name').value = '';
+    document.getElementById('quantity').value = '';
+    document.getElementById('price').value = '';
+    document.getElementById('supplierId').value = '';
+    document.getElementById('addBtn').textContent = 'Add Medicine';
+    document.getElementById('cancelBtn').style.display = 'none';
+}
+function deleteMedicine(id) {
+    if (!confirm('Delete this medicine?')) return;
+    fetch(API + '/medicines/' + id, { method: 'DELETE' })
+        .then(() => loadMedicines());
+}
+window.sellMedicine = function(e, id, name, price) {
+    e.preventDefault();
+    const qty = e.target.qty.value;
+    fetch(API + '/customers')
+        .then(res => res.json())
+        .then(customers => {
+            let custOptions = customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            let html = `<select id="saleCustomer">${custOptions}</select>`;
+            html += `<button onclick="doQuickInvoice(${id},'${name}',${qty},${price})">Confirm Sale</button>`;
+            let popup = document.createElement('div');
+            popup.id = "salePopup"; popup.style.position = 'fixed'; popup.style.top = '40%'; popup.style.left = '40%'; popup.style.background = '#fff'; popup.style.padding = '16px'; popup.style.border = '2px solid #2874A6'; popup.style.zIndex = 10001;
+            popup.innerHTML = `<p>Sell <b>${qty}</b> of <b>${name}</b> to: </p>${html} <button onclick="closeSalePopup()">Cancel</button>`;
+            document.body.appendChild(popup);
+        });
+};
+window.closeSalePopup = function() {
+    let popup = document.getElementById('salePopup');
+    if (popup) popup.remove();
+};
+window.doQuickInvoice = function(medId, name, qty, price) {
+    const customer_id = document.getElementById('saleCustomer').value;
+    fetch(API + '/invoices', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            customer_id,
+            items: [{medicine_id: medId, quantity: qty, price: price}]
+        })
+    }).then(() => {
+        loadMedicines();
+        loadInvoices();
+        closeSalePopup();
+    });
+};
+function populateMedicineSelects(meds) {
+    let options = meds.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+    document.getElementById('purchaseMedicine').innerHTML = options;
+    document.querySelectorAll('.invMedSel').forEach(sel => sel.innerHTML = options);
+}
+
+// --------- Suppliers ---------
+function loadSuppliers() {
+    let q = document.getElementById('supSearch')?.value || "";
+    fetch(API + '/suppliers' + (q ? '?q=' + encodeURIComponent(q) : ''))
+        .then(res => res.json())
+        .then(suppliers => {
+            // For each supplier, get #medicines. Would need backend for this, so we simulate with a request here.
+            fetch(API + '/medicines')
+            .then(res => res.json())
+            .then(meds => {
+                const tbody = document.querySelector('#suppliersTable tbody');
+                tbody.innerHTML = '';
+                suppliers.forEach(sup => {
+                    let medCount = meds.filter(m => m.supplier_id == sup.id).length;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${sup.id}</td>
+                        <td>${sup.name}</td>
+                        <td>${sup.phone || ''}</td>
+                        <td>${sup.email || ''}</td>
+                        <td>${sup.address || ''}</td>
+                        <td>${medCount}</td>
+                        <td>
+                            <button class="edit-btn" onclick="editSupplier(${sup.id}, '${sup.name}', '${sup.phone || ''}', '${sup.email || ''}', '${sup.address || ''}')">&#9998;</button>
+                            <button class="del-btn" onclick="deleteSupplier(${sup.id})">&#128465;</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                let options = suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                document.getElementById('supplierId').innerHTML = `<option value="">No Supplier</option>` + options;
+                document.getElementById('purchaseSupplier').innerHTML = options;
+            });
+        });
+}
+document.getElementById('supplierForm').onsubmit = function(e) {
+    e.preventDefault();
+    const id = document.getElementById('supId').value;
+    const sup = {
+        name: document.getElementById('supName').value,
+        phone: document.getElementById('supPhone').value,
+        email: document.getElementById('supEmail').value,
+        address: document.getElementById('supAddress').value
+    };
+    if (id) {
+        fetch(API + '/suppliers/' + id, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(sup)
+        }).then(() => {
+            resetSupForm();
+            loadSuppliers();
+            loadMedicines();
+        });
+    } else {
+        fetch(API + '/suppliers', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(sup)
+        }).then(() => {
+            resetSupForm();
+            loadSuppliers();
+            loadMedicines();
+        });
+    }
+};
+document.getElementById('cancelSupBtn').onclick = resetSupForm;
+function editSupplier(id, name, phone, email, address) {
+    document.getElementById('supId').value = id;
+    document.getElementById('supName').value = name;
+    document.getElementById('supPhone').value = phone;
+    document.getElementById('supEmail').value = email;
+    document.getElementById('supAddress').value = address;
+    document.getElementById('addSupBtn').textContent = 'Update Supplier';
+    document.getElementById('cancelSupBtn').style.display = '';
+}
+function resetSupForm() {
+    document.getElementById('supId').value = '';
+    document.getElementById('supName').value = '';
+    document.getElementById('supPhone').value = '';
+    document.getElementById('supEmail').value = '';
+    document.getElementById('supAddress').value = '';
+    document.getElementById('addSupBtn').textContent = 'Add Supplier';
+    document.getElementById('cancelSupBtn').style.display = 'none';
+}
+function deleteSupplier(id) {
+    if (!confirm('Delete this supplier?')) return;
+    fetch(API + '/suppliers/' + id, { method: 'DELETE' })
+        .then(() => { loadSuppliers(); loadMedicines(); });
+}
+
+// --------- Customers ---------
+function loadCustomers() {
+    let q = document.getElementById('custSearch')?.value || "";
+    fetch(API + '/customers' + (q ? '?q=' + encodeURIComponent(q) : ''))
+        .then(res => res.json())
+        .then(customers => {
+            // For each customer, show total sales (from invoices)
+            fetch(API + '/invoices')
+            .then(res => res.json())
+            .then(invoices => {
+                const tbody = document.querySelector('#customersTable tbody');
+                tbody.innerHTML = '';
+                customers.forEach(cust => {
+                    let totalSales = 0;
+                    invoices.forEach(inv => { if(inv.customer_id == cust.id) totalSales += parseFloat(inv.total); });
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${cust.id}</td>
+                        <td>${cust.name}</td>
+                        <td>${cust.phone || ''}</td>
+                        <td>${cust.email || ''}</td>
+                        <td>${cust.address || ''}</td>
+                        <td>₹${totalSales.toFixed(2)}</td>
+                        <td>
+                            <button class="edit-btn" onclick="editCustomer(${cust.id}, '${cust.name}', '${cust.phone || ''}', '${cust.email || ''}', '${cust.address || ''}')">&#9998;</button>
+                            <button class="del-btn" onclick="deleteCustomer(${cust.id})">&#128465;</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                let options = customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                document.getElementById('invoiceCustomer').innerHTML = options;
+            });
+        });
+}
+document.getElementById('customerForm').onsubmit = function(e) {
+    e.preventDefault();
+    const id = document.getElementById('custId').value;
+    const cust = {
+        name: document.getElementById('custName').value,
+        phone: document.getElementById('custPhone').value,
+        email: document.getElementById('custEmail').value,
+        address: document.getElementById('custAddress').value
+    };
+    if (id) {
+        fetch(API + '/customers/' + id, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(cust)
+        }).then(() => {
+            resetCustForm();
+            loadCustomers();
+        });
+    } else {
+        fetch(API + '/customers', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(cust)
+        }).then(() => {
+            resetCustForm();
+            loadCustomers();
+        });
+    }
+};
+document.getElementById('cancelCustBtn').onclick = resetCustForm;
+function editCustomer(id, name, phone, email, address) {
+    document.getElementById('custId').value = id;
+    document.getElementById('custName').value = name;
+    document.getElementById('custPhone').value = phone;
+    document.getElementById('custEmail').value = email;
+    document.getElementById('custAddress').value = address;
+    document.getElementById('addCustBtn').textContent = 'Update Customer';
+    document.getElementById('cancelCustBtn').style.display = '';
+}
+function resetCustForm() {
+    document.getElementById('custId').value = '';
+    document.getElementById('custName').value = '';
+    document.getElementById('custPhone').value = '';
+    document.getElementById('custEmail').value = '';
+    document.getElementById('custAddress').value = '';
+    document.getElementById('addCustBtn').textContent = 'Add Customer';
+    document.getElementById('cancelCustBtn').style.display = 'none';
+}
+function deleteCustomer(id) {
+    if (!confirm('Delete this customer?')) return;
+    fetch(API + '/customers/' + id, { method: 'DELETE' })
+        .then(() => loadCustomers());
+}
+
+// --------- Purchases ---------
+function loadPurchases() {
+    let from = document.getElementById('purchaseFrom')?.value;
+    let to = document.getElementById('purchaseTo')?.value;
+    fetch(API + '/purchases')
+        .then(res => res.json())
+        .then(purchases => {
+            // Date filter and total
+            let filtered = purchases;
+            if (from) filtered = filtered.filter(p => p.purchase_date >= from);
+            if (to) filtered = filtered.filter(p => p.purchase_date <= to + " 23:59:59");
+            let totalCost = filtered.reduce((sum, p) => sum + (p.quantity*p.purchase_price), 0);
+            document.getElementById('purchaseSummary').textContent = 
+                "Total: " + filtered.length + " purchases | ₹" + totalCost.toFixed(2);
+            const tbody = document.querySelector('#purchasesTable tbody');
+            tbody.innerHTML = '';
+            filtered.forEach(pur => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${pur.id}</td>
+                    <td>${pur.medicine_name}</td>
+                    <td>${pur.supplier_name}</td>
+                    <td>${pur.quantity}</td>
+                    <td>${pur.purchase_price}</td>
+                    <td>${pur.purchase_date}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
+}
+document.getElementById('purchaseForm').onsubmit = function(e) {
+    e.preventDefault();
+    const purchase = {
+        medicine_id: document.getElementById('purchaseMedicine').value,
+        supplier_id: document.getElementById('purchaseSupplier').value,
+        quantity: document.getElementById('purchaseQty').value,
+        purchase_price: document.getElementById('purchasePrice').value
+    };
+    fetch(API + '/purchases', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(purchase)
+    }).then(() => {
+        loadPurchases();
+        loadMedicines();
+    });
+};
+
+// --------- Invoices ---------
+function loadInvoices() {
+    let from = document.getElementById('invoiceFrom')?.value;
+    let to = document.getElementById('invoiceTo')?.value;
+    fetch(API + '/invoices')
+        .then(res => res.json())
+        .then(invoices => {
+            let filtered = invoices;
+            if (from) filtered = filtered.filter(inv => inv.invoice_date >= from);
+            if (to) filtered = filtered.filter(inv => inv.invoice_date <= to + " 23:59:59");
+            let totalSales = filtered.reduce((sum, i) => sum + parseFloat(i.total), 0);
+            document.getElementById('invoiceSummary').textContent = 
+                "Total: " + filtered.length + " invoices | ₹" + totalSales.toFixed(2);
+            const tbody = document.querySelector('#invoicesTable tbody');
+            tbody.innerHTML = '';
+            filtered.forEach(inv => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${inv.id}</td>
+                    <td>${inv.customer_name}</td>
+                    <td>${inv.total}</td>
+                    <td>${inv.invoice_date}</td>
+                    <td><button onclick="viewInvoiceItems(${inv.id})">View Items</button></td>
+                    <td><span class="link" onclick="printInvoice(${inv.id})">Print</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
+}
+function viewInvoiceItems(id) {
+    fetch(API + `/invoices/${id}/items`)
+        .then(res => res.json())
+        .then(items => {
+            alert('Invoice Items:\n' + items.map(i => `${i.medicine_name} - Qty: ${i.quantity} @${i.price}`).join('\n'));
+        });
+}
+function printInvoice(id) {
+    fetch(API + `/invoices/${id}/items`)
+        .then(res => res.json())
+        .then(items => {
+            // You can style this as needed
+            let html = `<h2>Invoice #${id}</h2><table border="1" style="width:100%;border-collapse:collapse;"><tr><th>Medicine</th><th>Qty</th><th>Price</th></tr>`;
+            items.forEach(i => {
+                html += `<tr><td>${i.medicine_name}</td><td>${i.quantity}</td><td>${i.price}</td></tr>`;
+            });
+            html += "</table>";
+            let win = window.open("", "_blank");
+            win.document.write(html);
+            win.print();
+        });
+}
+let invoiceItemCount = 0;
+function addInvoiceItem() {
+    invoiceItemCount++;
+    let div = document.createElement('div');
+    div.style.marginBottom = "6px";
+    div.innerHTML = `
+        <select class="invMedSel" required></select>
+        <input type="number" class="invQty" placeholder="Qty" min="1" required style="width:90px;">
+        <input type="number" class="invPrice" placeholder="Price" step="0.01" min="0" required style="width:110px;">
+        <button type="button" onclick="this.parentNode.remove()" style="background:#eee;color:#333;">Remove</button>
+    `;
+    document.getElementById('invoiceItems').appendChild(div);
+    fetch(API + '/medicines')
+        .then(res => res.json())
+        .then(meds => {
+            div.querySelector('.invMedSel').innerHTML = meds.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+        });
+}
+document.getElementById('invoiceForm').onsubmit = function(e) {
+    e.preventDefault();
+    const customer_id = document.getElementById('invoiceCustomer').value;
+    let items = [];
+    document.querySelectorAll('#invoiceItems > div').forEach(div => {
+        items.push({
+            medicine_id: div.querySelector('.invMedSel').value,
+            quantity: div.querySelector('.invQty').value,
+            price: div.querySelector('.invPrice').value
+        });
+    });
+    if (items.length === 0) return alert('Add at least one medicine to invoice');
+    fetch(API + '/invoices', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ customer_id, items })
+    }).then(() => {
+        document.getElementById('invoiceItems').innerHTML = '';
+        loadMedicines();
+        loadInvoices();
+    });
+};
+
+// Initial load
+loadSuppliers();
+loadMedicines();
+loadCustomers();
+loadPurchases();
+loadInvoices();
+addInvoiceItem();
+</script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pharmacy Admin Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="index" href="index.html">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6b9ce4 0%, #b3c6f7 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-container {
+            width: 370px;
+            padding: 38px 32px 32px 32px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(52, 73, 94, 0.18);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .login-container h2 {
+            margin-bottom: 26px;
+            color: #2d3e50;
+            font-size: 25px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 13px 16px;
+            margin: 10px 0;
+            border: 1px solid #dfe6e9;
+            border-radius: 6px;
+            font-size: 16px;
+            background: #f7fafd;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+        .login-container input[type="text"]:focus,
+        .login-container input[type="password"]:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
+        }
+        .login-container input[type="submit"] {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(90deg, #3498db 0%, #6b9ce4 100%);
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 8px;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.08);
+        }
+        .login-container input[type="submit"]:hover {
+            background: linear-gradient(90deg, #2980b9 0%, #6b9ce4 100%);
+            box-shadow: 0 4px 16px rgba(52, 152, 219, 0.13);
+        }
+        #message {
+            width: 100%;
+        }
+        .error, .success {
+            margin-top: 12px;
+            padding: 11px;
+            border-radius: 5px;
+            font-size: 15px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .error {
+            color: #e74c3c;
+            background: #fdecea;
+            border: 1px solid #f5b7b1;
+        }
+        .success {
+            color: #27ae60;
+            background: #eafaf1;
+            border: 1px solid #a9dfbf;
+        }
+        @media (max-width: 480px) {
+            .login-container {
+                width: 95vw;
+                padding: 22px 8vw 22px 8vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Pharmacy Admin Login</h2>
+        <div id="message"></div>
+        <form id="loginForm" autocomplete="off">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="submit" value="Login">
+        </form>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            var username = document.getElementById('username').value.trim();
+            var password = document.getElementById('password').value.trim();
+            var messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = "";
+
+            if(username === "" || password === ""){
+                messageDiv.innerHTML = '<div class="error">Please enter both username and password.</div>';
+                return;
+            }
+
+            // Credentials: admin / admin
+            if(username === 'admin' && password === 'admin'){
+                messageDiv.innerHTML = '<div class="success">Login successful! Redirecting...</div>';
+                setTimeout(() => {
+                    window.location.href = "index.html"; // Redirect to index.html
+                }, 1000);
+            } else {
+                messageDiv.innerHTML = '<div class="error">Invalid username or password.</div>';
+            }
+        });
+    </script>
+</body>
+</html>
